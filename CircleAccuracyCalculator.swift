@@ -39,21 +39,16 @@ struct CircleAccuracyCalculator {
 
     private static func calculateCircleAccuracy(center: CGPoint, radius: CGFloat, points: [CGPoint]) -> Double {
         var totalDifference: CGFloat = 0
-        var totalSquaredDifference: CGFloat = 0
         
         for point in points {
             let dx = point.x - center.x
             let dy = point.y - center.y
             let distance = sqrt(dx * dx + dy * dy)
-            let difference = abs(distance - radius)
-            totalDifference += difference
-            totalSquaredDifference += difference * difference
+            totalDifference += abs(distance - radius)
         }
         
         let averageDifference = totalDifference / CGFloat(points.count)
-        let rmsDifference = sqrt(totalSquaredDifference / CGFloat(points.count))
-        
-        let accuracyScore = max(0, 100 - Double(rmsDifference))
+        let accuracyScore = max(0, 100 - Double(averageDifference))
         
         return accuracyScore
     }

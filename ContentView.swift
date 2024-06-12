@@ -7,6 +7,15 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
+            headerView()
+            drawingView()
+            clearButton()
+        }
+        .padding()
+    }
+
+    private func headerView() -> some View {
+        VStack {
             Text("Draw a circle!")
                 .font(.largeTitle)
                 .padding()
@@ -14,48 +23,60 @@ struct ContentView: View {
             Text("Score: \(score, specifier: "%.2f")")
                 .font(.title)
                 .padding()
-
-            ZStack {
-                Path { path in
-                    if points.count > 1 {
-                        path.addLines(points)
-                    }
-                }
-                .stroke(Color.blue, lineWidth: 2)
-
-                Color.clear
-                    .contentShape(Rectangle())
-                    .gesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { value in
-                                if !isDrawing {
-                                    points = [value.location]
-                                    isDrawing = true
-                                } else {
-                                    points.append(value.location)
-                                }
-                            }
-                            .onEnded { _ in
-                                if points.count > 2 {
-                                    score = CircleAccuracyCalculator.calculateScore(from: points)
-                                }
-                                isDrawing = false
-                            }
-                    )
-            }
-            .background(Color.gray.opacity(0.2))
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            Button(action: {
-                points = []
-                score = 0.0
-            }) {
-                Text("Clear Circle")
-                    .font(.title)
-                    .padding()
-                    .cornerRadius(10)
-            }
         }
-        .padding()
+    }
+
+    private func drawingView() -> some View {
+        ZStack {
+            Path { path in
+                if points.count > 1 {
+                    path.addLines(points)
+                }
+            }
+            .stroke(Color.blue,
+                    lineWidth: 2)
+
+            Color.clear
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(
+                        minimumDistance: 0)
+                        .onChanged { value in
+                            if !isDrawing {
+                                points = [
+                                value.location]
+                                isDrawing = true
+                            } else {
+                                points.append(
+                                value.location)
+                            }
+                        }
+                        .onEnded { _ in
+                            if points.count > 2 {
+                                score =
+                                CircleAccuracyCalculator
+                                .calculateScore(
+                                from: points)
+                            }
+                            isDrawing = false
+                        }
+                )
+        }
+        .background(Color.gray
+                    .opacity(0.2))
+        .frame(maxWidth: .infinity,
+               maxHeight: .infinity)
+    }
+
+    private func clearButton() -> some View {
+        Button(action: {
+            points = []
+            score = 0.0
+        }) {
+            Text("Clear Circle")
+                .font(.title)
+                .padding()
+                .cornerRadius(10)
+        }
     }
 }
